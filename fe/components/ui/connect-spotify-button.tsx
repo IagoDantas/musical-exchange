@@ -4,12 +4,20 @@ import { Volume2 } from 'lucide-react';
 
 import { api } from "@/lib/axios";
 import { useEffect, useState } from "react";
+import Image from "next/image";
+import { Playlist } from "./playlist";
+
+type SpotifyAvatar = {
+  url: string
+  width: number
+  height: number
+}
 
 type UserData = {
   id: number;
   display_name: string;
   email: string;
-  avatar: string;
+  images: SpotifyAvatar[];
 }
 
 export function ConnectSpotifyButton() {
@@ -77,14 +85,18 @@ export function ConnectSpotifyButton() {
         Connect Spotify
       </Button>
       {userData && (
-        <div>
+        <div className="flex flex-col gap-8">
           <h3>Informações do Usuário</h3>
           <p>id: {userData.id}</p>
           <p>Nome: {userData.display_name}</p>
           <p>Email: {userData.email}</p>
-          {/* Adicione mais campos conforme necessário */}
-        </div>
-      )}
+          {userData && userData.images && (
+            <Image src={userData.images[1].url} width={userData.images[1].width} height={userData.images[1].height} alt={userData.display_name} />
+          )}
+          <Playlist accessToken={accessToken} />
+        </div >
+      )
+      }
     </>
 
   )
