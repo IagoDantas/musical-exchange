@@ -10,7 +10,6 @@ interface PlaylistProps {
 
 type Images = {
   url: string;
-
 }
 
 type Playlist = {
@@ -22,7 +21,7 @@ type Playlist = {
 }
 
 
-export function Playlist({ accessToken }: PlaylistProps) {
+export function ListOfPlaylist({ accessToken }: PlaylistProps) {
 
   const [playlist, setPlaylist] = useState<Playlist[]>([]);
 
@@ -53,8 +52,8 @@ export function Playlist({ accessToken }: PlaylistProps) {
           <div key={playlist.id} className="w-1/2 flex">
             <Image
               src={playlist.images[0].url}
-              width="300"
-              height="300"
+              width="100"
+              height="100"
               alt={playlist.name}
             />
             <h3>{playlist.name}</h3>

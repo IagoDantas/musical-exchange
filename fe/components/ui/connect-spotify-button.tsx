@@ -5,7 +5,7 @@ import { Volume2 } from 'lucide-react';
 import { api } from "@/lib/axios";
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { Playlist } from "./playlist";
+import { ListOfPlaylist } from "./list-of-playlist";
 
 type SpotifyAvatar = {
   url: string
@@ -59,7 +59,7 @@ export function ConnectSpotifyButton() {
       try {
         if (accessToken) {
           // Fazer uma chamada à API do Spotify para obter as informações do usuário
-          const response = await api.get('https://api.spotify.com/v1/me', {
+          const response = await api.get('/user', {
             headers: {
               Authorization: `Bearer ${accessToken}`,
             },
@@ -82,21 +82,8 @@ export function ConnectSpotifyButton() {
     <>
       <Button onClick={handleConnectSpotify}>
         <Volume2 size={20} />
-        Connect Spotify
+        Connect to Spotify
       </Button>
-      {userData && (
-        <div className="flex flex-col gap-8">
-          <h3>Informações do Usuário</h3>
-          <p>id: {userData.id}</p>
-          <p>Nome: {userData.display_name}</p>
-          <p>Email: {userData.email}</p>
-          {userData && userData.images && (
-            <Image src={userData.images[1].url} width={userData.images[1].width} height={userData.images[1].height} alt={userData.display_name} />
-          )}
-          <Playlist accessToken={accessToken} />
-        </div >
-      )
-      }
     </>
 
   )
