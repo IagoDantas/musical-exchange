@@ -1,41 +1,23 @@
 'use client'
+import { useEffect } from "react";
 import { Button } from "./button";
 import { Volume2 } from 'lucide-react';
 
-import { api } from "@/lib/axios";
-import { useEffect, useState } from "react";
-import Image from "next/image";
-import { ListOfPlaylist } from "./list-of-playlist";
-
-type SpotifyAvatar = {
-  url: string
-  width: number
-  height: number
+interface ConnectSpotifyButtonProps {
+  handleUserData: (token: string) => Promise<void>;
 }
-
-type UserData = {
-  id: number;
-  display_name: string;
-  email: string;
-  images: SpotifyAvatar[];
-}
-
-export function ConnectSpotifyButton() {
-
-  const [accessToken, setAccessToken] = useState<string>('');
-  const [userData, setUserData] = useState<UserData | null>(null);
+export function ConnectSpotifyButton({ handleUserData }: ConnectSpotifyButtonProps) {
 
   const handleConnectSpotify = async () => {
     try {
       // Redirecionar o usuário para a página de autenticação do Spotify
-      window.location.href = 'http://localhost:3333/signin'; // Substituir pela URL correta no seu servidor
+      window.location.href = 'http://localhost:3333/signin';// Substituir pela URL correta no seu servidor
     } catch (error) {
       console.error(error);
     }
   };
 
   useEffect(() => {
-
     const fetchAccessToken = async () => {
       try {
         // Verificar se há um access token na URL
@@ -44,7 +26,7 @@ export function ConnectSpotifyButton() {
 
         if (receivedAccessToken) {
           // Armazenar o access token no estado
-          setAccessToken(receivedAccessToken);
+          handleUserData(receivedAccessToken);
 
           // Limpar o access token da URL
           window.history.replaceState({}, document.title, window.location.pathname);
@@ -53,34 +35,13 @@ export function ConnectSpotifyButton() {
         console.error(error);
       }
     };
-
     fetchAccessToken();
-    const fetchUserData = async () => {
-      try {
-        if (accessToken) {
-          // Fazer uma chamada à API do Spotify para obter as informações do usuário
-          const response = await api.get('/user', {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-          });
+  }, [handleUserData])
 
-          const userData = response.data;
-
-          // Armazenar as informações do usuário no estado
-          setUserData(userData);
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    fetchUserData();
-  }, [accessToken]);
 
   return (
     <>
-      <Button onClick={handleConnectSpotify}>
+      <Button className="flex gap-2 font-normal bg-lime-600" onClick={handleConnectSpotify} >
         <Volume2 size={20} />
         Connect to Spotify
       </Button>
