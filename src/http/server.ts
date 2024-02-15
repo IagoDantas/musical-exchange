@@ -26,10 +26,6 @@ app.register(fastifyCors, {
   allowedHeaders: "Content-Type, Authorization",
 });
 
-app.get("/", (req, res) => {
-  res.send("Hello World!");
-});
-
 app
   .listen({
     port: Number(PORT),
