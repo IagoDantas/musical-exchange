@@ -1,12 +1,9 @@
 'use client'
 
 import { api } from "@/lib/axios";
-import Image from "next/image";
 import { useEffect, useState } from "react";
+import { PlaylistCard } from "./playlist-card";
 
-interface PlaylistProps {
-  accessToken: string;
-}
 
 type Images = {
   url: string;
@@ -21,19 +18,39 @@ type Playlist = {
 }
 
 
-export function ListOfPlaylist({ accessToken }: PlaylistProps) {
+export function ListOfPlaylist() {
 
   const [playlist, setPlaylist] = useState<Playlist[]>([]);
-
+  const [accessToken, setAccessToken] = useState<string>('');
   useEffect(() => {
+    const fetchAccessToken = async () => {
+      try {
+        // Verificar se há um access token na URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const receivedAccessToken = urlParams.get('access_token');
+
+        if (receivedAccessToken) {
+          // Armazenar o access token no estado
+          setAccessToken(receivedAccessToken);
+
+          // Limpar o access token da URL
+        }
+      } catch (error) {
+        console.error(error);
+      }
+
+    }
+    fetchAccessToken();
+
     const fetchPlaylists = async () => {
       try {
-        const response = await api.get('https://api.spotify.com/v1/me/playlists', {
+        const response = await api.get('/playlists', {
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },
         });
         const playlists = response.data.items;
+        console.log(playlists)
         setPlaylist(playlists);
       } catch (error) {
         console.error(error);
@@ -42,22 +59,21 @@ export function ListOfPlaylist({ accessToken }: PlaylistProps) {
     fetchPlaylists();
   }, [accessToken]);
 
-  console.log(playlist);
 
 
   return (
-    <div className="h-sreen w-screen flex-1 flex flex-row flex-wrap">
+    <div className="h-screen w-screen flex-1 flex flex-row flex-wrap gap-3 mt-20 items-center justify-center">
       {
         playlist.map((playlist) => (
-          <div key={playlist.id} className="w-1/2 flex">
-            <Image
-              src={playlist.images[0].url}
-              width="100"
-              height="100"
-              alt={playlist.name}
-            />
-            <h3>{playlist.name}</h3>
-          </div>
+          <PlaylistCard
+            key={playlist.id}
+            id={playlist.id}
+            name={playlist.name}
+            images={playlist.images}
+            href={playlist.href}
+            uri={playlist.uri}
+            accessToken={accessToken}
+          />
         ))
       }
     </div>
